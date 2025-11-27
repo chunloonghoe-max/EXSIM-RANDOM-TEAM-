@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXSIM DEVELOPMENT SDN BHD - RANDOM TEAM ASSIGNMENT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>EXSIM DEVELOPMENT SDN BHD - RANDOM TEAM ASSIGNMENT</h1>
+  <p>Enter your name, then the system will randomly assign you to Team A, Team B, or Team C (max 6 members per team)</p>
+  <input id="username" type="text" placeholder="Enter your name" style="padding:8px;font-size:16px;" />
+  <button onclick="assignTeam()">Assign me to a team</button>
+  <div id="result"></div>
+
+  <h2>Team List</h2>
+  <button onclick="showMaster()">View team lists</button>
+  <div id="master"></div>
+
+  <script>
+    let teams = ["Team A", "Team B", "Team C"];
+    let teamCounts = {"Team A": 0, "Team B": 0, "Team C": 0};
+    let teamMembers = {"Team A": [], "Team B": [], "Team C": []};
+
+    function assignTeam() {
+      const name = document.getElementById("username").value.trim();
+      if (!name) {
+        alert("Please enter your name!");
+        return;
+      }
+
+      const availableTeams = teams.filter(team => teamCounts[team] < 6);
+      if (availableTeams.length === 0) {
+        document.getElementById("result").innerText = "All teams are full!";
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * availableTeams.length);
+      const team = availableTeams[randomIndex];
+
+      teamCounts[team] += 1;
+      teamMembers[team].push(name);
+
+      document.getElementById("result").innerText = `${name} has been assigned to: ${team}`;
+    }
+
+    function showMaster() {
+      let html = "";
+      for (const team of teams) {
+        html += `<h3>${team} (${teamCounts[team]}/6)</h3>`;
+        if (teamMembers[team].length === 0) {
+          html += "<p>No members yet</p>";
+        } else {
+          html += "<ul>";
+          teamMembers[team].forEach((name, index) => {
+            html += `<li>${name} <button onclick=\"removeMemberWithPassword('${team}', ${index})\">Remove</button></li>`;
+          });
+          html += "</ul>";
+        }
+      }
+      document.getElementById("master").innerHTML = html;
+    }
+
+    function removeMemberWithPassword(team, index) {
+      const pwd = prompt("Enter password to remove member:");
+      if (pwd === "1234") {
+        teamCounts[team] -= 1;
+        teamMembers[team].splice(index, 1);
+        showMaster();
+      } else {
+        alert("Wrong password! Member not removed.");
+      }
+    }
+  </script>
+</body>
+</html>
